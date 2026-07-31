@@ -1,3 +1,11 @@
+
+> **Note** : Ce repository est une copie de travail du projet original
+> de [Amira Dgham](https://github.com/Amira-Dgham/publisher-app), utilisée
+> dans le cadre d'un stage (projet TaskMind). Voir [NOTICE.md](./NOTICE.md)
+> pour plus de détails.
+
+---
+
 # Publisher Application
 
 ## Overview
