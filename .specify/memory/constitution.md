@@ -1,50 +1,84 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Constitution du projet — publisher-app
 
-## Core Principles
+## 1. Objectif
+- Le projet est un système de gestion d'éditeur (publisher-app) implémenté en Java (Spring Boot) pour le backend, Angular pour le frontend, et PostgreSQL 15 comme base de données.
+- Fournir des API REST préfixées /api/v1/... et une expérience de développement testée et cohérente.
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+## 2. Architecture et couches
+- Architecture en couches : Controller -> Service -> Repository -> Entity.
+- Utiliser DTOs pour échanges API et MapStruct pour les conversions Entity <-> DTO.
+- Les contrôleurs exposent uniquement des DTOs; les entités JPA restent confinées aux couches internes et aux repositories.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+## 3. Conventions d'API
+- Tous les endpoints REST doivent être préfixés par /api/v1/.
+- Toutes les réponses d'API doivent être enveloppées dans ApiResponseDto<T> (success, message, data, meta).
+- En cas d'erreur, renvoyer un ApiResponseDto avec code HTTP approprié et message explicite; inclure un errorCode interne lorsque pertinent.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+## 4. Authentification et sécurité
+- Auth stateless basé sur JWT.
+  - Algorithme recommandé : HS256 (clé secrète via variable d'environnement) ou RS256 si paire clé publique/privée.
+  - Durée de validité du token : 1 heure (3600s).
+  - Utiliser refresh tokens si besoin (hors scope initial) — mais respecter le principe stateless côté API.
+- Hashing des mots de passe : BCrypt (strength configurable via application.properties, ex: 10-12).
+- Rôles : un seul rôle ADMIN pour cette version. Pas de gestion multi-rôles.
+- Protection des endpoints : autorisation par annotation (@PreAuthorize) ou configuration SecurityFilterChain en appliquant la vérification JWT.
+- Ne jamais committer de secrets (clés JWT, mots de passe, etc.) dans le dépôt. Les clés vont dans des variables d'environnement, fichiers .env (non commit) ou gestionnaire de secrets.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+## 5. Tests et qualité
+- Tests unitaires et d'intégration en Java : TestNG.
+- Pattern de tests : Factory pattern (ex : BookFactory) pour créer fixtures/tests data.
+- Rapports : Allure pour rapports de tests (intégration CI).
+- Couverture : viser couverture significative sur les services/logic métier; les contrôleurs peuvent être testés via tests d'intégration.
+- Frontend : utiliser les frameworks de tests Angular (Karma/Jasmine ou Jest selon configuration) et tests E2E si prévus.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+## 6. Conventions de commits et gestion de branches
+- Aucun commit direct sur main.
+- Toujours passer par une Pull Request (PR) pour fusionner sur main.
+- Branches : feature/<ticket>-<brève-description>, fix/<ticket>-..., chore/<...>.
+- PR doit contenir : description, liens vers tickets, checklist de tests exécutés, notes UI si pertinent.
+- Configurer protection de branche main (required status checks, review minimum 1+, ne pas autoriser pushes directs).
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## 7. CI / Validation automatique (recommandations)
+- CI doit exécuter :
+  - Build backend (mvn -T1C clean package)
+  - Exécuter tests unitaires (mvn test) et générer rapport Allure
+  - Linter/TypeCheck pour frontend (npm ci && npm run build/test)
+  - Vérification qu'aucun secret n'est committé (git-secrets / truffleHog optionnel)
+  - Statuts CI doivent passer avant merge
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## 8. Documentation et fichiers recommandés
+- README.md : commandes rapides (build, run, test).
+- CONTRIBUTING.md : workflow de branche/PR, conventions de commit.
+- SECURITY.md : procédure pour signaler vulnérabilités et gestion des secrets.
+- Ajouter CONSTITUTION.md (ce document) à la racine pour référence.
+- Exemple de snippet JWT config dans application.properties (voir section Exemples rapides).
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## 9. Exemples rapides (configuration/implémentation)
+- application.properties (extraits via variables d'environnement) :
+  - jwt.secret=${JWT_SECRET}
+  - jwt.expiration=3600
+  - spring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+- Hashage BCrypt (Spring) :
+  - @Bean public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(10); }
+- Envelope ApiResponseDto<T> : fields typiques { boolean success; String message; T data; Map<String,Object> meta; }
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## 10. Gouvernance et workflow
+- Revue de code obligatoire via PR.
+- Tests unitaires/integration obligatoires pour toute logique métier ajoutée.
+- Ajout ou modification de schéma DB doit être accompagné de scripts de migration (Flyway/Liquibase) et tests d'intégration.
 
-## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+## 11. Notes complémentaires
+- Prévoir versioning d'API (/api/v2/...) pour ruptures futures.
+- Pour l'auth, prévoir extension User/Role mais ne pas activer multi-roles pour cette version.
+- Respect RGPD si le projet traite de données personnelles (pseudonymisation/consentement).
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+---
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Checklist rapide avant merge d'une nouvelle fonctionnalité :
+- [ ] Code compilé et buildé localement
+- [ ] Tests unitaires/integ exécutés et passing
+- [ ] Allure report généré (si applicable)
+- [ ] Pas de secrets committés
+- [ ] PR avec description et checklist
+- [ ] Au moins 1 approbation de revue
+- [ ] CI status checks passed
