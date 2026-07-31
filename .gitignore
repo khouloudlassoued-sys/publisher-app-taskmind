@@ -1,0 +1,41 @@
+# --- Spring Boot / Java ---
+spring-publisher-service/target/
+spring-publisher-service/.mvn/
+*.class
+*.jar
+!*.jar.spec
+
+# --- Angular / Node ---
+angular-publisher-service/node_modules/
+angular-publisher-service/dist/
+angular-publisher-service/.angular/
+
+# --- Tests d'automatisation ---
+api-automation-testing/target/
+ui-automation-testing/target/
+**/allure-results/
+**/allure-report/
+
+# --- Environnements et secrets (JAMAIS committer) ---
+.env
+.env.local
+spring-publisher-service/config/.env.dev
+spring-publisher-service/config/.env.staging
+spring-publisher-service/config/.env.prod
+*.pem
+*.key
+
+# --- IDE ---
+.vscode/*.log
+.idea/
+
+# --- Spec Kit : recommandation de sécurité officielle ---
+# Ne PAS ignorer tout .github/ (on veut committer les agents .agent.md)
+# mais exclure spécifiquement tout futur fichier de credentials qui
+# pourrait s'y glisser (ex. tokens sauvegardés localement par un agent)
+.github/**/*.token
+.github/**/*credentials*
+.github/**/.auth/
+
+# --- Docker ---
+# (rien à ignorer ici, docker-compose.yml doit rester versionné)
