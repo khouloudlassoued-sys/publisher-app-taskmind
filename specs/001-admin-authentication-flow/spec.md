@@ -15,6 +15,7 @@
 - Q: How should admin users be represented for authentication? → A: Use existing user records plus an admin role or flag.
 - Q: How should session state be managed for admin access? → A: Use a simple stateless JWT valid for 1 hour, without refresh tokens.
 - Q: How should protected admin access be enforced? → A: Protect both admin routes and APIs with shared authorization rules.
+- Q: What is the MVP scope for the initial release? → A: Deliver the full admin authentication MVP in v1, including the login screen, backend authentication, route/API protection, logout, and expiration handling.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -83,6 +84,7 @@ As an administrator, I want my session to remain secure and predictable so that 
 - **FR-008**: The system MUST redirect users away from protected admin routes when they are logged out or their session expires.
 - **FR-009**: The system MUST use stateless JWT-based session handling for admin sessions, with a validity period of 1 hour and no refresh-token flow.
 - **FR-010**: The system MUST cover successful and failed authentication scenarios with relevant automated tests.
+- **FR-011**: The initial release MUST include the full admin authentication MVP scope: login screen, backend authentication, route/API protection, logout, and expiration handling.
 
 ### Key Entities *(include if feature involves data)*
 
