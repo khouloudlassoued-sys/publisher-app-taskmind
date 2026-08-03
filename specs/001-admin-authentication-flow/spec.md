@@ -12,7 +12,7 @@
 
 ### Session 2026-08-01
 
-- Q: How should admin users be represented for authentication? → A: Use existing user records plus an admin role or flag.
+- Q: How should admin users be represented for authentication? → A: Use a dedicated Admin entity created from scratch for authentication.
 - Q: How should session state be managed for admin access? → A: Use a simple stateless JWT valid for 1 hour, without refresh tokens.
 - Q: How should protected admin access be enforced? → A: Protect both admin routes and APIs with shared authorization rules.
 - Q: What is the MVP scope for the initial release? → A: Deliver the full admin authentication MVP in v1, including the login screen, backend authentication, route/API protection, logout, and expiration handling.
@@ -75,7 +75,7 @@ As an administrator, I want my session to remain secure and predictable so that 
 ### Functional Requirements
 
 - **FR-001**: The system MUST provide a dedicated admin login experience in the frontend for administrators.
-- **FR-002**: The system MUST validate submitted admin credentials against existing user records and an explicit admin role or flag before granting access.
+- **FR-002**: The system MUST validate submitted admin credentials against a dedicated Admin entity created from scratch before granting access.
 - **FR-003**: The system MUST deny access and show a clear error message when login credentials are invalid.
 - **FR-004**: The system MUST allow authorized administrators to access protected admin pages and features after successful authentication.
 - **FR-005**: The system MUST prevent non-admin users from accessing admin-only pages and API endpoints.

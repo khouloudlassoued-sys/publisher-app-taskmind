@@ -39,6 +39,7 @@ Implement a secure admin authentication MVP for the publisher app by adding a fr
 - [x] Authorization will be enforced server-side with Spring Security and admin-role checks.
 - [x] Tests will be added for backend and frontend authentication behavior.
 - [x] No secrets will be committed; configuration will use environment variables.
+- [x] Database schema changes for the new Admin entity will be handled through a migration step (Flyway or Liquibase) and covered by integration tests.
 
 ## Project Structure
 
@@ -81,7 +82,7 @@ angular-publisher-service/
 └── src/app/**/*.spec.ts
 ```
 
-**Structure Decision**: Implement the feature across the existing Spring Boot backend and Angular frontend modules by creating a new Admin domain in the backend, introducing dedicated auth/security packages, and adding a small admin feature area in the frontend while reusing the existing service and DTO conventions.
+**Structure Decision**: Implement the feature across the existing Spring Boot backend and Angular frontend modules by creating a new Admin domain in the backend, introducing dedicated auth/security packages, adding a small admin feature area in the frontend, and applying a database migration for the new Admin table while reusing the existing service and DTO conventions.
 
 ## Complexity Tracking
 
