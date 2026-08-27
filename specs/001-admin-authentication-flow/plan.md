@@ -74,15 +74,14 @@ angular-publisher-service/
 ├── src/app/
 │   ├── core/
 │   │   ├── models/
-│   │   ├── services/
-│   │   └── interceptors/
+│   │   └── services/
 │   ├── features/
 │   │   └── admin/
 │   └── shared/
 └── src/app/**/*.spec.ts
 ```
 
-**Structure Decision**: Implement the feature across the existing Spring Boot backend and Angular frontend modules by creating a new Admin domain in the backend, introducing dedicated auth/security packages, adding a small admin feature area in the frontend, and applying a database migration for the new Admin table while reusing the existing service and DTO conventions.
+**Structure Decision**: Implement the feature across the existing Spring Boot backend and Angular frontend modules by creating a new Admin domain in the backend, introducing dedicated auth/security packages, adding a small admin feature area in the frontend, and applying a database migration for the new Admin table while reusing the existing service and DTO conventions. Add Axios interceptors in the existing `angular-publisher-service/src/app/core/services/api.service.ts` for JWT request injection and 401 response handling, alongside its current loader interceptors.
 
 ## Complexity Tracking
 

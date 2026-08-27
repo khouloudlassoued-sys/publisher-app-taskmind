@@ -96,7 +96,7 @@
 ### Implementation for User Story 3
 
 - [ ] T025 [US3] Implement logout flow and token clearing in angular-publisher-service/src/app/core/services/auth.service.ts and angular-publisher-service/src/app/features/admin/login.component.ts
-- [ ] T026 [US3] Add JWT expiration handling and redirect logic in angular-publisher-service/src/app/core/interceptors/auth.interceptor.ts and angular-publisher-service/src/app/core/guards/admin.guard.ts
+- [ ] T026 [US3] Modify the existing angular-publisher-service/src/app/core/services/api.service.ts to add Axios request interception that injects the JWT and response interception that handles 401 cleanup/redirect, while preserving the existing loader interceptors; update angular-publisher-service/src/app/core/guards/admin.guard.ts for expiration handling and redirect logic
 - [ ] T027 [US3] Add backend auth/me and logout endpoints in spring-publisher-service/src/main/java/com/mobelite/publisherManagementSystem/controller/AuthController.java
 
 **Checkpoint**: All user stories should now be independently functional.
