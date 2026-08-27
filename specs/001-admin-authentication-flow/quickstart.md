@@ -3,7 +3,7 @@
 ## Prerequisites
 - Backend service running with a configured database.
 - Frontend dev server available.
-- At least one user record exists with admin=true.
+- An initial dedicated `Admin` entity has been created through the development-only bootstrap script or endpoint, using a pre-hashed password or one-time setup secret.
 
 ## Validation steps
 1. Start the backend and frontend services.

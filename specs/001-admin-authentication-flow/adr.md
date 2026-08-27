@@ -7,7 +7,7 @@ Proposed
 
 The feature requires a dedicated admin login experience, server-enforced protection of admin pages and APIs, BCrypt password verification, and a stateless JWT with a one-hour lifetime and no refresh token. The intended backend convention is Controller -> Service -> Repository -> Entity with `ApiResponseDto` envelopes and `/api/v1/` endpoints.
 
-The repository supports the proposed layering, but it does not currently contain Spring Security/JWT dependencies or security classes. Its Angular application uses Axios through `ApiService`, not Angular `HttpClient` interceptors, and its SSR configuration prerenders every route. The backend currently relies on `spring.jpa.hibernate.ddl-auto=update` and has no migration dependency or migration directory. `CONSTITUTION.md` is empty, so the checks asserted in `plan.md` are not independently established constraints.
+The repository supports the proposed layering, but it does not currently contain Spring Security/JWT dependencies or security classes. Its Angular application uses Axios through `ApiService`, not Angular `HttpClient` interceptors, and its SSR configuration prerenders every route. The backend currently relies on `spring.jpa.hibernate.ddl-auto=update` and has no migration dependency or migration directory. The project constitution is present and populated at `.specify/memory/constitution.md`, so the checks asserted in `plan.md` are grounded in the repository's documented constraints.
 
 The feature artifacts also conflict: `spec.md` and `data-model.md` require a new `Admin` entity, while `research.md` and `quickstart.md` describe an existing user record with `admin=true`. The contract calls logout an invalidation operation, but a stateless JWT cannot be revoked by a client-only logout endpoint unless a server-side denylist or token-version state is added.
 
@@ -29,7 +29,7 @@ Expose:
 
 Protect Angular admin routes with a functional guard that checks local session state and redirects to `/admin/login` with a return URL. Extend the existing Axios `ApiService` with request/response interception (or introduce one narrowly scoped adapter) to attach `Authorization: Bearer <token>`, clear the token on 401, and navigate to login. The guard is a user-experience control only; the backend remains authoritative for every admin API. Because the application prerenders all routes, admin routes must be excluded from prerendering or rendered only client-side, and browser-only token access must be guarded during SSR.
 
-For the MVP, store the access token in `sessionStorage` after login and clear it on logout or a 401/expiry event. This limits persistence to the browser tab but does not defend against XSS. Serve the application over HTTPS, do not log tokens or passwords, use generic login errors, and apply reasonable login throttling/rate limiting at the deployment boundary. A later migration to an HttpOnly, Secure, SameSite cookie requires an explicit CSRF design and is not silently mixed with bearer-token behavior.
+For the MVP, store the access token in `localStorage` after login and clear it on logout or a 401/expiry event. MVP simplicity, tab persistence favored over the marginal security gain of tab-scoped storage. This does not defend against XSS. Serve the application over HTTPS, do not log tokens or passwords, use generic login errors, and apply reasonable login throttling/rate limiting at the deployment boundary. A later migration to an HttpOnly, Secure, SameSite cookie requires an explicit CSRF design and is not silently mixed with bearer-token behavior.
 
 Own the `Admin` schema through a versioned migration and seed an initial admin through an operational bootstrap mechanism that accepts a pre-hashed password or one-time setup secret; never commit credentials. Disable `ddl-auto=update` for deployed environments once migration ownership is introduced. JWT signing secret, issuer/audience, CORS origins, and token lifetime must come from environment-backed configuration, with startup failure for missing or weak production secrets. Configure CORS narrowly; bearer authorization does not require `allowCredentials=true` when no cookie is used.
 
@@ -37,7 +37,7 @@ Own the `Admin` schema through a versioned migration and seed an initial admin t
 
 1. The browser submits credentials to the public login endpoint over HTTPS.
 2. The service loads the normalized username, compares the supplied password with BCrypt, and rejects all failures without revealing whether the username exists.
-3. On success, the service signs a one-hour JWT whose subject identifies the admin and whose authority is `ROLE_ADMIN`; the browser stores it in `sessionStorage`.
+3. On success, the service signs a one-hour JWT whose subject identifies the admin and whose authority is `ROLE_ADMIN`; the browser stores it in `localStorage`.
 4. The Axios layer attaches the bearer token to API requests. The backend filter validates it on every request, and endpoint/method authorization checks `ROLE_ADMIN`.
 5. The frontend guard prevents ordinary navigation without a token, but a missing, malformed, expired, or rejected token always results in backend denial and client cleanup.
 6. Logout removes the token locally. Since no refresh tokens or server session exist, a copied token remains usable until its expiry. If immediate revocation is a hard requirement, this ADR must be revisited to add a denylist or per-admin token version, accepting state and operational complexity.
@@ -70,7 +70,20 @@ Own the `Admin` schema through a versioned migration and seed an initial admin t
 
 ## Verdict
 
-Changes Requested
+Approved
+
+## Reviewer Notes
+
+- Use a dedicated `Admin` entity created from scratch; do not extend an existing user domain or add an `admin` flag.
+- Use stateless JWT authentication with a one-hour lifetime, no refresh-token flow, and BCrypt password hashing.
+- Store the access token in `localStorage`: MVP simplicity, tab persistence favored over the marginal security gain of tab-scoped storage.
+- Extend the existing Axios interceptors in `angular-publisher-service/src/app/core/services/api.service.ts` for JWT injection and 401 cleanup/redirect; do not create a separate Angular interceptor file.
+- Guard every browser-only `localStorage` access with `isPlatformBrowser(platformId)` because Angular SSR executes on Node.js.
+- Own the Admin schema through a versioned database migration and create the first Admin through a dev-only bootstrap script or endpoint using a pre-hashed password or one-time secret; never commit credentials or expose the bootstrap mechanism in production.
+- Keep backend authorization authoritative for admin APIs; the Angular guard is only a navigation control.
+- Logout clears the browser token locally; immediate server-side revocation is outside the stateless MVP scope.
+- Preserve the existing layered backend architecture, `/api/v1/` endpoints, and `ApiResponseDto` response envelopes.
+- SSR route handling and Axios integration require dedicated browser/SSR validation before release.
 
 ## Open Follow-ups
 
@@ -78,4 +91,3 @@ Changes Requested
 - Decide whether the product accepts logout's one-hour residual token validity; otherwise approve a revocation mechanism and revise the stateless constraint.
 - Add the exact Spring Security/JWT and Flyway/Liquibase dependencies, migration strategy, and production `ddl-auto` policy to `plan.md`.
 - Specify which existing CRUD routes are admin-protected and how SSR should handle `/admin/**` before implementation.
-- Populate the constitution or explicitly mark the plan's constitution checks as repository assumptions rather than passed governance gates.
