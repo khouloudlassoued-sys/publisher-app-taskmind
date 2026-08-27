@@ -24,7 +24,7 @@ Implement a secure admin authentication MVP for the publisher app by adding a fr
 
 **Performance Goals**: Support the existing CRUD flows without introducing measurable latency regression for admin login and protected requests
 
-**Constraints**: Must remain stateless, use JWT valid for 1 hour, and avoid refresh tokens; must align with the existing layered Spring architecture and DTO response format
+**Constraints**: Must remain stateless, use JWT valid for 1 hour, and avoid refresh tokens; must align with the existing layered Spring architecture and DTO response format. Because the Angular application uses SSR (`outputMode: server` with `src/server.ts`), every `localStorage` access in `auth.service.ts` and the `api.service.ts` extension must be guarded by `isPlatformBrowser(platformId)`; SSR runs on Node.js, where `localStorage` is unavailable.
 
 **Scale/Scope**: MVP covering admin authentication for the publisher application using a new Admin entity created from scratch, not a full multi-role identity system
 
