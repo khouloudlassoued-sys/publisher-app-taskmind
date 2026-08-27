@@ -9,7 +9,7 @@ The feature requires a dedicated admin login experience, server-enforced protect
 
 The repository supports the proposed layering, but it does not currently contain Spring Security/JWT dependencies or security classes. Its Angular application uses Axios through `ApiService`, not Angular `HttpClient` interceptors, and its SSR configuration prerenders every route. The backend currently relies on `spring.jpa.hibernate.ddl-auto=update` and has no migration dependency or migration directory. The project constitution is present and populated at `.specify/memory/constitution.md`, so the checks asserted in `plan.md` are grounded in the repository's documented constraints.
 
-The feature artifacts also conflict: `spec.md` and `data-model.md` require a new `Admin` entity, while `research.md` and `quickstart.md` describe an existing user record with `admin=true`. The contract calls logout an invalidation operation, but a stateless JWT cannot be revoked by a client-only logout endpoint unless a server-side denylist or token-version state is added.
+The feature artifacts now consistently require a new `Admin` entity, client-side-only logout under the stateless JWT design, a dev-only bootstrap guarded by configuration, and a minimal authenticated-admin projection. A copied bearer token remains usable until expiry after client logout, which is an accepted MVP trade-off.
 
 ## Decision
 
@@ -87,7 +87,4 @@ Approved
 
 ## Open Follow-ups
 
-- Update `research.md` and `quickstart.md` to consistently use the dedicated `Admin` entity and define the admin bootstrap/seed process.
-- Decide whether the product accepts logout's one-hour residual token validity; otherwise approve a revocation mechanism and revise the stateless constraint.
-- Add the exact Spring Security/JWT and Flyway/Liquibase dependencies, migration strategy, and production `ddl-auto` policy to `plan.md`.
 - Specify which existing CRUD routes are admin-protected and how SSR should handle `/admin/**` before implementation.

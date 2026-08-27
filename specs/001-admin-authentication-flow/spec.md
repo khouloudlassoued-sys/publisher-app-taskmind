@@ -80,7 +80,7 @@ As an administrator, I want my session to remain secure and predictable so that 
 - **FR-004**: The system MUST allow authorized administrators to access protected admin pages and features after successful authentication.
 - **FR-005**: The system MUST prevent non-admin users from accessing admin-only pages and API endpoints.
 - **FR-006**: The system MUST enforce the same authorization rules for both admin routes and admin APIs.
-- **FR-007**: The system MUST support logout so that an authenticated administrator can end the current session.
+- **FR-007**: The system MUST support logout so that an authenticated administrator can clear the client-side token and end the client session; under the stateless JWT design, logout MUST NOT be described as server-side token invalidation.
 - **FR-008**: The system MUST redirect users away from protected admin routes when they are logged out or their session expires.
 - **FR-009**: The system MUST use stateless JWT-based session handling for admin sessions, with a validity period of 1 hour and no refresh-token flow.
 - **FR-010**: The system MUST cover successful and failed authentication scenarios with relevant automated tests.
@@ -108,3 +108,8 @@ As an administrator, I want my session to remain secure and predictable so that 
 - The feature is expected to fit the existing JWT-based security model described in the project constitution.
 - Admin-only functionality is already defined in the application and only needs to be protected by authentication and authorization rules.
 - Standard session expiration behavior is expected to follow the recommended authentication duration of 1 hour and does not include a refresh-token mechanism.
+
+### Out of Scope
+
+- Login rate limiting and brute-force protection are explicitly out of scope for this MVP. The residual risk is accepted for the initial release; a future ticket may assign protection to infrastructure such as a reverse proxy or WAF if operational evidence requires it.
+- Server-side JWT revocation through a denylist or token-versioning is out of scope. `POST /api/v1/auth/logout` clears the client-side token but does not invalidate the token server-side under the stateless JWT design.

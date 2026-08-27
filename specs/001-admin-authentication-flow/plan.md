@@ -14,7 +14,7 @@ Implement a secure admin authentication MVP for the publisher app by adding a fr
 
 **Primary Dependencies**: Spring Boot 3.5, Spring Security, JWT (JJWT or Spring Security JWT support), PostgreSQL, Angular Router, PrimeNG
 
-**Storage**: PostgreSQL via Spring Data JPA
+**Storage**: PostgreSQL via Spring Data JPA; schema changes managed with Flyway migrations
 
 **Testing**: JUnit 5, Mockito, Spring MockMvc, Angular Jasmine/Karma
 
@@ -24,7 +24,7 @@ Implement a secure admin authentication MVP for the publisher app by adding a fr
 
 **Performance Goals**: Support the existing CRUD flows without introducing measurable latency regression for admin login and protected requests
 
-**Constraints**: Must remain stateless, use JWT valid for 1 hour, and avoid refresh tokens; must align with the existing layered Spring architecture and DTO response format. Because the Angular application uses SSR (`outputMode: server` with `src/server.ts`), every `localStorage` access in `auth.service.ts` and the `api.service.ts` extension must be guarded by `isPlatformBrowser(platformId)`; SSR runs on Node.js, where `localStorage` is unavailable.
+**Constraints**: Must remain stateless, use JWT valid for 1 hour, and avoid refresh tokens; must align with the existing layered Spring architecture and DTO response format. Database schema changes must use Flyway, including a normalized unique constraint on `Admin.username`; deployed environments must not rely on `ddl-auto=update`. Because the Angular application uses SSR (`outputMode: server` with `src/server.ts`), every `localStorage` access in `auth.service.ts` and the `api.service.ts` extension must be guarded by `isPlatformBrowser(platformId)`; SSR runs on Node.js, where `localStorage` is unavailable.
 
 **Scale/Scope**: MVP covering admin authentication for the publisher application using a new Admin entity created from scratch, not a full multi-role identity system
 
@@ -39,7 +39,7 @@ Implement a secure admin authentication MVP for the publisher app by adding a fr
 - [x] Authorization will be enforced server-side with Spring Security and admin-role checks.
 - [x] Tests will be added for backend and frontend authentication behavior.
 - [x] No secrets will be committed; configuration will use environment variables.
-- [x] Database schema changes for the new Admin entity will be handled through a migration step (Flyway or Liquibase) and covered by integration tests.
+- [x] Database schema changes for the new Admin entity will be handled through Flyway migrations and covered by integration tests.
 
 ## Project Structure
 
@@ -81,7 +81,7 @@ angular-publisher-service/
 └── src/app/**/*.spec.ts
 ```
 
-**Structure Decision**: Implement the feature across the existing Spring Boot backend and Angular frontend modules by creating a new Admin domain in the backend, introducing dedicated auth/security packages, adding a small admin feature area in the frontend, and applying a database migration for the new Admin table while reusing the existing service and DTO conventions. Add Axios interceptors in the existing `angular-publisher-service/src/app/core/services/api.service.ts` for JWT request injection and 401 response handling, alongside its current loader interceptors.
+**Structure Decision**: Implement the feature across the existing Spring Boot backend and Angular frontend modules by creating a new Admin domain in the backend, introducing a dedicated security package and Flyway migration for the new Admin table, adding a small admin feature area in the frontend, and reusing the existing service and DTO conventions. Add Axios interceptors in the existing `angular-publisher-service/src/app/core/services/api.service.ts` for JWT request injection and 401 response handling, alongside its current loader interceptors.
 
 ## Complexity Tracking
 

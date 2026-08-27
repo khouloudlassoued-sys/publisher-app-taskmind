@@ -37,8 +37,21 @@
 
 ## GET /api/v1/auth/me
 
-Returns the current authenticated user details and admin status.
+Returns only the current authenticated admin's non-sensitive identifying fields: `adminId` and `username`. The response never includes `passwordHash`, credentials, tokens, or bootstrap data.
+
+### Success response
+```json
+{
+  "success": true,
+  "message": "Authenticated admin",
+  "data": {
+    "adminId": 1,
+    "username": "admin"
+  },
+  "timestamp": "2026-08-01T11:00:00"
+}
+```
 
 ## POST /api/v1/auth/logout
 
-Invalidates the client-side session state and returns a success message.
+Clears the client-side token and returns a success message; it does not invalidate the token server-side under the stateless JWT design.
