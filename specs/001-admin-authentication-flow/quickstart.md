@@ -1,3 +1,10 @@
+## Admin authentication
+
+The admin API uses a stateless one-hour JWT and BCrypt password hashes. No credentials or JWT secrets belong in source control.
+
+For local development only, set `ADMIN_BOOTSTRAP_ENABLED=true`, `ADMIN_BOOTSTRAP_USERNAME`, and `ADMIN_BOOTSTRAP_PASSWORD_HASH` in the environment before starting the Spring service. The bootstrap is active only with the `dev` profile; it is disabled by default and unavailable when the `prod` profile is active. Generate the hash with a trusted BCrypt tool, then remove the bootstrap variables after the first account is created.
+
+Sign in through `/admin/login`. Logout removes the browser token; it does not revoke a copied JWT server-side.
 # Quickstart: Admin Authentication Flow
 
 ## Prerequisites

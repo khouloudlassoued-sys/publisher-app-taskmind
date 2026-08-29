@@ -1,4 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { environment } from '../../../environments/environment';
 import { LoaderService } from './loader.service';
@@ -7,7 +9,7 @@ import { LoaderService } from './loader.service';
 export class ApiService {
   private axiosInstance: AxiosInstance;
 
-  constructor(private loader: LoaderService) {
+  constructor(private loader: LoaderService, private router: Router, @Inject(PLATFORM_ID) private platformId: object) {
     console.log('API Base URL:', environment.apiBaseUrl); // Debug log for base URL
     this.axiosInstance = axios.create({
       baseURL: environment.apiBaseUrl,
@@ -19,9 +21,17 @@ export class ApiService {
     // Attach interceptors to manage loader state
     this.axiosInstance.interceptors.request.use((config) => {
       this.loader.start();
+      if (isPlatformBrowser(this.platformId) && !config.url?.includes('/auth/login')) {
+        const token = localStorage.getItem('admin_access_token');
+        if (token) config.headers.Authorization = `Bearer ${token}`;
+      }
       return config;
     }, (error) => {
       this.loader.stop();
+      if (error.response?.status === 401 && isPlatformBrowser(this.platformId)) {
+        localStorage.removeItem('admin_access_token');
+        void this.router.navigate(['/admin/login'], { queryParams: { returnUrl: this.router.url } });
+      }
       return Promise.reject(error);
     });
 
@@ -49,7 +59,7 @@ export class ApiService {
   public delete<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
     return this.axiosInstance.delete<T>(url, config).catch(this.handleError);
   }
-
+  
   private handleError(error: any): never {
     throw error;
   }
