@@ -28,10 +28,6 @@ export class ApiService {
       return config;
     }, (error) => {
       this.loader.stop();
-      if (error.response?.status === 401 && isPlatformBrowser(this.platformId)) {
-        localStorage.removeItem('admin_access_token');
-        void this.router.navigate(['/admin/login'], { queryParams: { returnUrl: this.router.url } });
-      }
       return Promise.reject(error);
     });
 
@@ -40,6 +36,10 @@ export class ApiService {
       return response;
     }, (error) => {
       this.loader.stop();
+      if (error.response?.status === 401 && isPlatformBrowser(this.platformId)) {
+        localStorage.removeItem('admin_access_token');
+        void this.router.navigate(['/admin/login'], { queryParams: { returnUrl: this.router.url } });
+      }
       return Promise.reject(error);
     });
   }
