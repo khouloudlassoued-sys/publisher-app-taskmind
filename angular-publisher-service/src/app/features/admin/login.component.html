@@ -2,10 +2,10 @@
   <h1>Admin sign in</h1>
   <form (ngSubmit)="submit()" #loginForm="ngForm">
     <label for="username">Username</label>
-    <input id="username" name="username" [(ngModel)]="username" autocomplete="username" required>
+    <input id="username" name="username" [(ngModel)]="username" autocomplete="username" required data-testid="admin-username-input">
     <label for="password">Password</label>
-    <input id="password" name="password" [(ngModel)]="password" type="password" autocomplete="current-password" required>
-    @if (errorMessage) { <p role="alert">{{ errorMessage }}</p> }
-    <button type="submit" [disabled]="submitting || loginForm.invalid">Sign in</button>
+    <input id="password" name="password" [(ngModel)]="password" type="password" autocomplete="current-password" required data-testid="admin-password-input">
+    @if (errorMessage) { <p role="alert" data-testid="admin-login-error">{{ errorMessage }}</p> }
+    <button type="submit" [disabled]="submitting || loginForm.invalid" data-testid="admin-login-button">Sign in</button>
   </form>
 </main>

@@ -15,14 +15,14 @@ export class AuthService {
   }
 
   login(credentials: AuthenticationRequest): Promise<AuthToken> {
-    return this.api.post<ApiResponse<AuthToken>>('/api/v1/auth/login', credentials).then(response => {
+    return this.api.post<ApiResponse<AuthToken>>('/auth/login', credentials).then(response => {
       if (isPlatformBrowser(this.platformId)) localStorage.setItem(TOKEN_KEY, response.data.data.accessToken);
       return response.data.data;
     });
   }
 
   me(): Promise<AdminProfile> {
-    return this.api.get<ApiResponse<AdminProfile>>('/api/v1/auth/me').then(response => response.data.data);
+    return this.api.get<ApiResponse<AdminProfile>>('/auth/me').then(response => response.data.data);
   }
 
   logout(): void {
