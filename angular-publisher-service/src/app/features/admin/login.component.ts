@@ -7,7 +7,8 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-admin-login',
   standalone: true,
   imports: [FormsModule],
-  templateUrl: './login.component.html'
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   username = '';

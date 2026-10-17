@@ -1,0 +1,103 @@
+:host {
+  display: grid;
+  min-height: 100vh;
+  padding: 24px;
+  place-items: center;
+  box-sizing: border-box;
+  background: #f3f6f8;
+  color: #1f2933;
+}
+
+.admin-login,
+.admin-login * {
+  box-sizing: border-box;
+}
+
+.admin-login {
+  width: min(100%, 420px);
+  margin: 0;
+  padding: 32px;
+  border: 1px solid #e2e8ec;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 12px 32px rgba(24, 39, 48, 0.09);
+}
+
+.admin-login h1 {
+  margin: 0 0 24px;
+  color: #18252d;
+  font-size: 1.6rem;
+  font-weight: 650;
+  line-height: 1.25;
+}
+
+.admin-login form {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-login label {
+  margin-top: 6px;
+  color: #394b55;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admin-login input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid #cbd5db;
+  border-radius: 7px;
+  outline: none;
+  background: #fff;
+  color: #18252d;
+  font: inherit;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.admin-login input:focus {
+  border-color: #087f8c;
+  box-shadow: 0 0 0 3px rgba(8, 127, 140, 0.16);
+}
+
+.admin-login [data-testid='admin-login-error'] {
+  margin: 2px 0 4px;
+  color: #b42318;
+  font-size: 0.875rem;
+  line-height: 1.45;
+}
+
+.admin-login button {
+  min-height: 46px;
+  margin-top: 8px;
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 7px;
+  background: #087f8c;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 650;
+  transition: background-color 150ms ease, opacity 150ms ease;
+}
+
+.admin-login button:hover:not(:disabled) {
+  background: #066b76;
+}
+
+.admin-login button:focus-visible {
+  outline: 3px solid rgba(8, 127, 140, 0.3);
+  outline-offset: 2px;
+}
+
+.admin-login button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@media (max-width: 480px) {
+  .admin-login {
+    padding: 26px 22px;
+  }
+}
