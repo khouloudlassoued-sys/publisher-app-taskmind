@@ -39,3 +39,5 @@ spring-publisher-service/config/.env.prod
 
 # --- Docker ---
 # (rien à ignorer ici, docker-compose.yml doit rester versionné)
+# --- Fichiers de secrets locaux ---
+spring-publisher-service/config/.env.*.local
