@@ -51,10 +51,12 @@ How it works:
 [Table: field name | contract | backend | frontend | DB | match?]
 
 ## Findings
-[List, with severity]
+- **HIGH|MEDIUM|LOW:** <description>
+Choose exactly one severity per finding (HIGH, MEDIUM or LOW) and name the file concerned in the description.
 
 ## Verdict
-Approved | Changes Requested
+Approved | Approved with notes | Changes Requested | Blocked
+Write exactly one of these values on its own line, with no extra text.
 
 ## Reviewer Notes
 [Summary]

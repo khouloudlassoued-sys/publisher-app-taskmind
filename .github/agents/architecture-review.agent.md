@@ -37,7 +37,7 @@ How it works:
 # ADR-<NNN>: <Feature title>
 
 ## Status
-Proposed
+[Accepted if the verdict is Approved or Approved with notes; Proposed if Changes Requested or Blocked. Write only the chosen word.]
 
 ## Context
 [Summarize the problem and the constraints from plan.md/constitution.md]
@@ -49,8 +49,13 @@ Proposed
 - Positive: [...]
 - Negative / trade-offs: [...]
 
+## Findings
+- **HIGH|MEDIUM|LOW:** <description>
+Choose exactly one severity per finding (HIGH, MEDIUM or LOW) and name the file concerned in the description.
+
 ## Verdict
-Approved | Changes Requested
+Approved | Approved with notes | Changes Requested | Blocked
+Write exactly one of these values on its own line, with no extra text.
 
 ## Reviewer Notes
 [Any concerns to flag to the human before implementation]
