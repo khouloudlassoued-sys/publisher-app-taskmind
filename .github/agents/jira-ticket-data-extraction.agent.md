@@ -1,3 +1,7 @@
+---
+description: "Fetches a Jira ticket by key, normalizes the data into a stable JSON shape, and returns it."
+---
+
 **Agent: Jira Ticket Data Extraction**
 
 Description: Fetches a Jira ticket by key (issue code), normalizes the data into a stable JSON shape, and returns it. This agent is intended to use the workspace's Atlassian MCP tools (the `mcp_atlassian-mcp_*` functions) rather than local helper scripts.

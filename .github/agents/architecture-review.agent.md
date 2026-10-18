@@ -1,3 +1,7 @@
+---
+description: "Reviews the technical plan and data model of a feature before implementation begins, documenting structural decisions, trade-offs, and a final verdict."
+---
+
 **Agent: Architecture Review**
 
 Description: Reviews the technical plan and data model of a feature 

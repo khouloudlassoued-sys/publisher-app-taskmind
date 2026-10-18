@@ -1,3 +1,7 @@
+---
+description: "Reviews E2E tests against the approved specification, security requirements, and real test execution evidence."
+---
+
 **Agent: E2E Review**
 
 Description: Reviews the E2E tests written for a feature against the 

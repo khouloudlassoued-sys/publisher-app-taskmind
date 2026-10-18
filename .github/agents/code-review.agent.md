@@ -1,3 +1,7 @@
+---
+description: "Reviews the actual implemented code of a feature against its approved ADR, Security Review, Integration Review, and project constitution."
+---
+
 **Agent: Code Review**
 
 Description: Reviews the actual implemented code of a feature against 

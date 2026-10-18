@@ -1,3 +1,7 @@
+---
+description: "Writes and wires the end-to-end UI test scenario for the Admin Authentication Flow feature inside the existing ui-automation-testing module."
+---
+
 # E2E Test Agent
 
 ## Description

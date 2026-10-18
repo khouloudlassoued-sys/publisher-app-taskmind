@@ -1,3 +1,7 @@
+---
+description: "Verifies that the backend, frontend, and database layers of an implemented feature agree on the exact shape of the data they exchange."
+---
+
 **Agent: Integration Review**
 
 Description: Verifies that the backend, frontend, and database layers 

@@ -1,3 +1,7 @@
+---
+description: "Reviews the technical plan and API contracts of a feature before implementation begins, specifically for security concerns."
+---
+
 **Agent: Security Review**
 
 Description: Reviews the technical plan and API contracts of a feature 
