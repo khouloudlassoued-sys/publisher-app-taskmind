@@ -1,0 +1,27 @@
+{
+  "reference_branch": "main",
+  "reference_commit": "9e1fc84",
+  "verified_on": "2026-10-19",
+  "backend": [
+    {
+      "class": "com.mobelite.publisherManagementSystem.service.impl.BookServiceImplTest$GetAllBooksTests",
+      "name": "shouldGetAllBooksWithPagination",
+      "kind": "failure",
+      "proof": "mvnw test -Dtest=BookServiceImplTest* sur main 9e1fc84"
+    },
+    {
+      "class": "com.mobelite.publisherManagementSystem.service.impl.BookServiceImplTest$GetAllBooksTests",
+      "name": "shouldHandleMultipleBooksWithDifferentAuthors",
+      "kind": "error",
+      "proof": "mvnw test -Dtest=BookServiceImplTest* sur main 9e1fc84"
+    }
+  ],
+  "frontend": [
+    {
+      "suite": "AppComponent",
+      "name": "should render title",
+      "kind": "failure",
+      "proof": "ng test --watch=false --browsers=ChromeHeadless sur main 9e1fc84 (NG0201 ActivatedRoute)"
+    }
+  ]
+}
