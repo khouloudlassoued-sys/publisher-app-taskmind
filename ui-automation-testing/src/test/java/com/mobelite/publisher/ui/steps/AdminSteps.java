@@ -12,7 +12,7 @@ public class AdminSteps {
 
     private final AdminPage adminPage = new AdminPage(PlaywrightFactory.getPage());
 
-    private static final String VALID_ADMIN_USERNAME = System.getProperty("admin.username", "admin");
+    private static final String VALID_ADMIN_USERNAME = System.getProperty("admin.username");
     private static final String VALID_ADMIN_PASSWORD = System.getProperty("admin.password");
 
     @Given("I am on the admin login page")
@@ -23,8 +23,11 @@ public class AdminSteps {
 
     @When("I log in with valid admin credentials")
     public void iLogInWithValidAdminCredentials() {
+        if (VALID_ADMIN_USERNAME == null || VALID_ADMIN_USERNAME.isBlank()) {
+            throw new IllegalStateException("Required JVM system property 'admin.username' is missing or blank. Pass it with -Dadmin.username=...");
+        }
         if (VALID_ADMIN_PASSWORD == null || VALID_ADMIN_PASSWORD.isBlank()) {
-            throw new IllegalStateException("Admin E2E credential missing. Set -Dadmin.username and -Dadmin.password or provide the same values in the test environment.");
+            throw new IllegalStateException("Required JVM system property 'admin.password' is missing or blank. Pass it with -Dadmin.password=...");
         }
         adminPage.login(VALID_ADMIN_USERNAME, VALID_ADMIN_PASSWORD);
     }
