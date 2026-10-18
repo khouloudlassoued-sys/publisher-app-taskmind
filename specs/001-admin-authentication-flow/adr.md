@@ -1,7 +1,7 @@
 # ADR-001: Admin Authentication Flow Architecture
 
 ## Status
-Proposed
+Accepted
 
 ## Context
 
