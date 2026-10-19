@@ -79,3 +79,123 @@ def test_run_agent_fails_when_existing_output_is_unchanged(tmp_path):
 
     assert result.status == "failed"
     assert "was not changed" in result.detail
+
+
+def test_allowed_globs_accepts_and_reports_matching_new_files(tmp_path):
+    spring_file = "spring-publisher-service/src/test/java/X/FooTest.java"
+    angular_file = "angular-publisher-service/src/a/b/foo.spec.ts"
+
+    def run_process(command, repo_root, timeout_s):
+        for relative_path in (spring_file, angular_file):
+            path = tmp_path / relative_path
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("new file", encoding="utf-8")
+        return _completed()
+
+    mocks = _mock_run_agent(
+        set(),
+        {spring_file, angular_file},
+        run_process,
+    )
+    with mocks[0], mocks[1], mocks[2]:
+        result = run_agent(
+            "reviewer",
+            "Review changes",
+            None,
+            tmp_path,
+            allowed_globs=[
+                "spring-publisher-service/src/test/*",
+                "angular-publisher-service/src/*.spec.ts",
+            ],
+        )
+
+    assert result.status == "ok"
+    assert result.changed_paths == sorted([spring_file, angular_file])
+
+
+def test_allowed_globs_rejects_changed_file_outside_patterns(tmp_path):
+    source_path = "spring-publisher-service/src/main/java/Foo.java"
+    source_file = tmp_path / source_path
+    source_file.parent.mkdir(parents=True)
+    source_file.write_text("before", encoding="utf-8")
+
+    def run_process(command, repo_root, timeout_s):
+        source_file.write_text("after", encoding="utf-8")
+        return _completed()
+
+    mocks = _mock_run_agent(
+        {source_path},
+        {source_path},
+        run_process,
+    )
+    with mocks[0], mocks[1], mocks[2]:
+        result = run_agent(
+            "reviewer",
+            "Review changes",
+            None,
+            tmp_path,
+            allowed_globs=["spring-publisher-service/src/test/*"],
+        )
+
+    assert result.status == "unexpected_changes"
+    assert result.changed_paths == [source_path]
+    assert source_path in result.detail
+
+
+def test_allowed_globs_fails_when_no_allowed_path_changed(tmp_path):
+    mocks = _mock_run_agent(set(), set(), lambda *args: _completed())
+    with mocks[0], mocks[1], mocks[2]:
+        result = run_agent(
+            "reviewer",
+            "Review changes",
+            None,
+            tmp_path,
+            allowed_globs=["spring-publisher-service/src/test/*"],
+        )
+
+    assert result.status == "failed"
+    assert result.detail == "No allowed path was changed"
+    assert result.changed_paths == []
+
+
+def test_existing_dirty_file_changed_during_run_is_unexpected_in_expected_mode(tmp_path):
+    dirty_path = "dirty.txt"
+    dirty_file = tmp_path / dirty_path
+    dirty_file.write_text("before", encoding="utf-8")
+    expected = Path("report.md")
+
+    def run_process(command, repo_root, timeout_s):
+        dirty_file.write_text("after", encoding="utf-8")
+        (tmp_path / expected).write_text("Generated report", encoding="utf-8")
+        return _completed()
+
+    mocks = _mock_run_agent(
+        {dirty_path},
+        {dirty_path, expected.as_posix()},
+        run_process,
+    )
+    with mocks[0], mocks[1], mocks[2]:
+        result = run_agent("reviewer", "Review changes", expected, tmp_path)
+
+    assert result.status == "unexpected_changes"
+    assert dirty_path in result.detail
+
+
+def test_existing_dirty_file_unchanged_during_run_is_not_unexpected(tmp_path):
+    dirty_path = "dirty.txt"
+    (tmp_path / dirty_path).write_text("unchanged", encoding="utf-8")
+    expected = Path("report.md")
+
+    def run_process(command, repo_root, timeout_s):
+        (tmp_path / expected).write_text("Generated report", encoding="utf-8")
+        return _completed()
+
+    mocks = _mock_run_agent(
+        {dirty_path},
+        {dirty_path, expected.as_posix()},
+        run_process,
+    )
+    with mocks[0], mocks[1], mocks[2]:
+        result = run_agent("reviewer", "Review changes", expected, tmp_path)
+
+    assert result.status == "ok"
