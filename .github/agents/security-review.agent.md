@@ -14,13 +14,17 @@ Inputs:
 - Path to the feature's plan.md
 - Path to the feature's data-model.md
 - Path to the feature's contracts/ folder
+- The feature's ADR (specs/<feature>/adr.md), produced by the Architecture Review
 - The project constitution (.specify/memory/constitution.md)
 
 Outputs:
 - A security review file written to specs/<feature>/security-review.md
 
 How it works:
-- Read plan.md, data-model.md, contracts/*, and constitution.md.
+- Read plan.md, data-model.md, contracts/*, adr.md, and constitution.md.
+- If adr.md is missing, report it as a HIGH finding and set the verdict to Blocked.
+- Check that the security-relevant decisions recorded in adr.md (authentication mechanism, token handling, secrets) are consistent with plan.md and with the threat model.
+- Before stating that a file or directory is missing, or that a configuration property has a given value, check the current repository. If a claim relies only on a document (plan.md, adr.md), say so explicitly in the finding, and distinguish the ADR "Context" (state before implementation) from its "Decision".
 - Evaluate against common risks relevant to the feature type, including 
   (when applicable to authentication/authorization features):
   - Password storage (must be hashed, never stored/logged in plaintext)
@@ -62,6 +66,7 @@ Write exactly one of these values on its own line, with no extra text.
 
 Notes:
 - This agent does NOT modify plan.md or contracts/ itself.
+- This agent does NOT modify adr.md.
 - A "Blocked" verdict means implementation must not proceed until the 
   human resolves the finding.
 - The final sign-off decision belongs to the human reviewing this 
