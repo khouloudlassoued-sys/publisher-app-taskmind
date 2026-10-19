@@ -15,6 +15,10 @@ class ProjectState(TypedDict):
     loop_counts: dict[str, int]
     failure: Failure | None
     history: list[str]
+    outcome: str
+    failed_step: int | None
+    failure_reason: str | None
+    decisions: dict[str, str]
 
 
 def initial_state(ticket_id: str) -> ProjectState:
@@ -26,4 +30,8 @@ def initial_state(ticket_id: str) -> ProjectState:
         "loop_counts": {},
         "failure": None,
         "history": [],
+        "outcome": "running",
+        "failed_step": None,
+        "failure_reason": None,
+        "decisions": {},
     }

@@ -17,7 +17,11 @@ STEP_NAMES = {
     6: "tasks",
     7: "persistence_check",
     8: "analyze_cross",
+    18: "architecture_review",
+    19: "security_review",
     9: "implementation",
+    20: "integration_review",
+    21: "converge",
     10: "unit_tests_gen",
     11: "unit_tests_validation",
     12: "code_review",
@@ -36,28 +40,45 @@ STEP_DESTINATIONS = {
     5: (6, None),
     6: (7, None),
     7: (8, None),
-    8: (9, None),
-    9: (10, None),
+    8: (18, None),
+    18: (19, 4, None),
+    19: (9, 18, None),
+    9: (20, None),
+    20: (10, 21, None),
+    21: (9, None),
     10: (11, None),
-    11: (12, 9, None),
-    12: (13, 9, None),
+    11: (12, 21, None),
+    12: (13, 21, None),
     13: (14, None),
-    14: (15, 9, None),
+    14: (15, 21, None),
     15: (16, None),
     16: (17, 15, None),
-    17: (None, 9),
+    17: (None, 21),
 }
+
+
+def _decision_executor(decision_key: str, default: str) -> Executor:
+    def execute(state: ProjectState) -> str:
+        return state.get("decisions", {}).get(decision_key, default)
+
+    return execute
 
 
 def build_graph(executors: dict[int, Executor] | None = None) -> Any:
     configured_executors = executors or {}
+    default_executors = {
+        18: _decision_executor("architecture_review", "approved"),
+        19: _decision_executor("security_review", "approved"),
+        20: _decision_executor("integration_review", "Approved"),
+    }
     builder = StateGraph(ProjectState)
 
     for step_number, step_name in STEP_NAMES.items():
-        builder.add_node(
-            step_name,
-            make_node(step_number, configured_executors.get(step_number)),
+        executor = configured_executors.get(
+            step_number,
+            default_executors.get(step_number),
         )
+        builder.add_node(step_name, make_node(step_number, executor))
 
     builder.add_edge(START, STEP_NAMES[1])
 
